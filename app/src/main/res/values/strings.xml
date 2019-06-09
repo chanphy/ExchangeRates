@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ExchangeRates</string>
+    <string name="txt_exchange_rate">Курсы валют</string>
+    <string name="currency_not_found">Произошла ошибка, данные не могут загрузиться. Пожалуйста попробуйте снова, либо проверьте подключение к интернету.</string>
+</resources>
