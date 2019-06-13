@@ -1,12 +1,16 @@
 package by.viktor.exchangerates.presenter;
 
+import android.annotation.SuppressLint;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class DateVariettyDey {
-    public String dateDate() {
-        DateFormat df =
+import by.viktor.exchangerates.views.ViewDate;
+
+public class GetDateDey implements ViewDate {
+    public String dateToday() {
+        @SuppressLint("SimpleDateFormat") DateFormat df =
                 new SimpleDateFormat("MM.dd.yyyy");
         String date = df.format(Calendar.getInstance().getTime());
         return date;
@@ -15,7 +19,7 @@ public class DateVariettyDey {
     }
 
     public String dateTomorrow() {
-        DateFormat dateFormat =
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat =
                 new SimpleDateFormat("MM.dd.yyyy");
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, +1);
@@ -25,7 +29,7 @@ public class DateVariettyDey {
     }
 
     public String dateYesterday() {
-        DateFormat dateFormat =
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat =
                 new SimpleDateFormat("MM.dd.yyyy");
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);

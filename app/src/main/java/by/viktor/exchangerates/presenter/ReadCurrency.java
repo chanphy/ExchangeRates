@@ -1,5 +1,6 @@
 package by.viktor.exchangerates.presenter;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -24,16 +25,20 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import by.viktor.exchangerates.adapter.CurrencyAdapter;
 import by.viktor.exchangerates.model.CurrencyModel;
+import by.viktor.exchangerates.model.CurrencyModelRateTomorrow;
+import by.viktor.exchangerates.views.ViewReadCurrency;
 
-public class ReadCurrency extends AsyncTask<Void, Void, Void> {
+public class ReadCurrency extends AsyncTask<Void, Void, Void> implements ViewReadCurrency {
 
+    @SuppressLint("StaticFieldLeak")
     private Context context;
-    private DateVariettyDey dvd = new DateVariettyDey();
+    private GetDateDey getDateDey = new GetDateDey();
     private ProgressDialog progressDialog;
     private static ArrayList<CurrencyModel> currencies;
+    private static ArrayList<CurrencyModelRateTomorrow> onlyTomorrowRates;
+    @SuppressLint("StaticFieldLeak")
     private RecyclerView mRvCurrency;
-    private URL url;
-    private String URL = "https://www.nbrb.by/Services/XmlExRates.aspx?ondate=" + dvd.dateDate();
+    private String URL = "https://www.nbrb.by/Services/XmlExRates.aspx?ondate=" ;
 
 
     public ReadCurrency(Context context, RecyclerView mRvCurrency) {
@@ -51,8 +56,8 @@ public class ReadCurrency extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        processXml(getData(dvd.dateTomorrow())); //курс валют на сегодня
-//        processXml(getData(dvd.dateTomorrow())); //курс валют на завтра
+        processXmlRateToday(getDataCurrencyToday(getDateDey.dateToday())); //курс валют на сегодня
+        processXmlRateTomorrow(getDataCurrencyTomorrow(getDateDey.dateTomorrow())); //курс валют на завтра
         return null;
     }
 
@@ -60,12 +65,12 @@ public class ReadCurrency extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         progressDialog.dismiss();
         super.onPostExecute(aVoid);
-        CurrencyAdapter adapter = new CurrencyAdapter(context, currencies);
+        CurrencyAdapter adapter = new CurrencyAdapter(context, currencies, onlyTomorrowRates);
         mRvCurrency.setLayoutManager(new LinearLayoutManager(context));
         mRvCurrency.setAdapter(adapter);
     }
 
-    private void processXml(Document data) {
+    public void processXmlRateToday(Document data) {
         if (data != null) {
             currencies = new ArrayList<>();
             Element root = data.getDocumentElement();
@@ -84,20 +89,63 @@ public class ReadCurrency extends AsyncTask<Void, Void, Void> {
                         currencyModel.getScale() + currencyModel.getRate());
             }
         } else {
-            Log.d("TAGGGG", "Data = " + dvd.dateDate());
+            Log.d("TAGGGG", "Data = " + getDateDey.dateToday());
         }
     }
 
-    public Document getData(String dateDay) {
+    public void processXmlRateTomorrow(Document data){
+        if (data != null) {
+            onlyTomorrowRates = new ArrayList<>();
+            Element root = data.getDocumentElement();
+            NodeList items = root.getElementsByTagName("Currency");
+            Log.d("TAG", "\n" + "--->> " + items.getLength());
+            for (int i = 0; i < items.getLength(); i++) {
+                Node currency = items.item(i);
+                if (currency.getNodeType() == Node.ELEMENT_NODE) {
+                    Element nElement = (Element) currency;
+                    onlyTomorrowRates.add(new CurrencyModelRateTomorrow(getNode("Rate", nElement)));
+                }
+            }
+            for (CurrencyModelRateTomorrow currencyModel : onlyTomorrowRates) {
+                Log.d("TAG", "\n" + "--->> " + currencyModel.getRateTomorrow());
+            }
+        } else {
+            Log.d("TAGGGG", "Data = " + getDateDey.dateToday());
+        }
+    }
+
+    public Document getDataCurrencyToday(String dateDay) {
         try {
-            url = new URL(URL);
+            java.net.URL url = new URL(URL+ getDateDey.dateToday());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             InputStream inputStream = connection.getInputStream();
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            Document xmlDoc = builder.parse(inputStream);
-            return xmlDoc;
+            return builder.parse(inputStream);
+
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public Document getDataCurrencyTomorrow(String dateDay){
+        try {
+            java.net.URL url = new URL(URL + getDateDey.dateTomorrow());
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            InputStream inputStream = connection.getInputStream();
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            return builder.parse(inputStream);
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -113,7 +161,7 @@ public class ReadCurrency extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    private String getNode(String sTag, Element mElement) {
+    public String getNode(String sTag, Element mElement) {
         NodeList mList = mElement.getElementsByTagName(sTag).item(0)
                 .getChildNodes();
         Node mValue = mList.item(0);

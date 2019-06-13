@@ -2,11 +2,11 @@ package by.viktor.exchangerates.model;
 
 public class CurrencyModel {
 
-    public String NumCode;
-    public String CharCode;
-    public String Scale;
-    public String Name;
-    public String Rate;
+    private String NumCode;
+    private String CharCode;
+    private String Scale;
+    private String Name;
+    private String Rate;
 
 
     public CurrencyModel( String NumCode, String CharCode, String Scale, String Name, String Rate) {
@@ -18,44 +18,23 @@ public class CurrencyModel {
         this.Rate = Rate;
     }
 
-
     public String getNumCode() {
         return NumCode;
-    }
-
-    public void setNumCode(String numCode) {
-        this.NumCode = numCode;
     }
 
     public String getCharCode() {
         return CharCode;
     }
 
-    public void setCharCode(String charCode) {
-        this.CharCode = charCode;
-    }
-
     public String getScale() {
         return Scale;
-    }
-
-    public void setScale(String Scale) {
-        Scale = Scale;
     }
 
     public String getName() {
         return Name;
     }
 
-    public void setName(String Name) {
-        Name = Name;
-    }
-
     public String getRate() {
         return Rate;
-    }
-
-    public void setRate(String Rate) {
-        Rate = Rate;
     }
 }
