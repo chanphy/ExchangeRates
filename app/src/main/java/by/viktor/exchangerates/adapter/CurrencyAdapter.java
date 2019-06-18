@@ -12,19 +12,21 @@ import java.util.ArrayList;
 
 import by.viktor.exchangerates.model.CurrencyModel;
 import by.viktor.exchangerates.R;
-import by.viktor.exchangerates.model.CurrencyModelRateTomorrow;
-import by.viktor.exchangerates.presenter.GetDateDey;
+import by.viktor.exchangerates.model.CurrencyModelRate;
 
 public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter.CustomViewHolder> {
 
     private ArrayList<CurrencyModel> currencyModels;
     private Context context;
-    private ArrayList<CurrencyModelRateTomorrow> currencyModelRateTomorrows;
+    private ArrayList<CurrencyModelRate> currencyModelRates;
+    private ArrayList<CurrencyModelRate> currencyYesterday;
 
-    public CurrencyAdapter(Context context, ArrayList<CurrencyModel>currencyModels, ArrayList<CurrencyModelRateTomorrow> currencyModelRateTomorrows){
+    public CurrencyAdapter(Context context, ArrayList<CurrencyModel>currencyModels,
+                           ArrayList<CurrencyModelRate> currencyModelRates, ArrayList<CurrencyModelRate> currencyYesterday){
         this.context= context;
         this.currencyModels = currencyModels;
-        this.currencyModelRateTomorrows = currencyModelRateTomorrows;
+        this.currencyModelRates = currencyModelRates;
+        this.currencyYesterday = currencyYesterday;
     }
 
     @Override
@@ -37,11 +39,13 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter.Custom
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         CurrencyModel current = currencyModels.get(position);
-        CurrencyModelRateTomorrow currencyModelRateTomorrow = currencyModelRateTomorrows.get(position);
+        CurrencyModelRate currencyModelRate = currencyModelRates.get(position);
+        CurrencyModelRate currencyYesterday = currencyModelRates.get(position);
         holder.CharCode.setText(current.getCharCode());
         holder.Name.setText(current.getScale() + " " + current.getName());
         holder.Rate.setText(current.getRate());
-        holder.RateTomorrow.setText(currencyModelRateTomorrow.getRateTomorrow());
+        holder.RateTomorrow.setText(currencyModelRate.getRate());
+        holder.RateYesterday.setText(currencyYesterday.getRate());
 
     }
 
@@ -51,7 +55,7 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter.Custom
     }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
-        TextView CharCode,Scale, Name, Rate, RateTomorrow;
+        TextView CharCode,Scale, Name, Rate, RateTomorrow, RateYesterday;
         @SuppressLint("CutPasteId")
         public CustomViewHolder(View itemView) {
             super(itemView);
@@ -60,6 +64,8 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter.Custom
             Name = itemView.findViewById(R.id.txt_currency_name);
             Rate = itemView.findViewById(R.id.txt_currency_today_value);
             RateTomorrow = itemView.findViewById(R.id.txt_currency_tomorrow_value);
+            RateYesterday = itemView.findViewById(R.id.txt_currency_yesterday_value);
+
 
         }
     }

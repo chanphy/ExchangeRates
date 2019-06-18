@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,7 +12,6 @@ import android.widget.TextView;
 import by.viktor.exchangerates.presenter.GetDateDey;
 import by.viktor.exchangerates.R;
 import by.viktor.exchangerates.presenter.ReadCurrency;
-import by.viktor.exchangerates.views.ViewDate;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
     }
 }
 
